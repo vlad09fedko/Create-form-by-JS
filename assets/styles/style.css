@@ -1,0 +1,116 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #3eaaf5;
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+  padding: 20px 30px;
+  border: 1px dashed white;
+  width: 700px;
+  color: white;
+}
+
+h1 {
+  text-transform: uppercase;
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+h1 + p {
+  font-size: 20px;
+  margin-bottom: 25px;
+}
+
+p ~ div {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 300px;
+  height: 50px;
+  padding: 15px;
+  border-radius: 5px;
+  font-size: 20px;
+  color: #8a8a8a;
+  margin-bottom: 15px;
+}
+
+input::placeholder {
+  color: #8a8a8a;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border: 3px solid #0282dd;
+}
+
+.radio-container {
+  margin: 10px 0;
+  padding: 15px;
+  border: 1px solid white;
+}
+
+.radio-container > div {
+  width: 540px;
+}
+
+input[type="radio"] {
+  cursor: pointer;
+  margin: auto;
+}
+
+label {
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.radio-container p {
+  margin-top: 10px;
+}
+
+.radio-container:not(:has(+ .radio-container)) {
+  margin-bottom: 0;
+}
+
+.checkbox-container {
+  margin: 25px 0;
+  justify-content: center;
+  gap: 10px;
+}
+
+input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.checkbox-container label {
+  font-size: 1rem;
+}
+
+input[type="submit"] {
+  width: 100%;
+  height: 50px;
+  border-radius: 5px;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  background-color: #28d2d1;
+  cursor: pointer;
+}
