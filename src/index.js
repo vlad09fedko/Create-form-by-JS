@@ -28,7 +28,6 @@ input1_1.setAttribute('placeholder', 'First name');
 input1_1.setAttribute('required', 'true');
 input1_2.setAttribute('type', 'text');
 input1_2.setAttribute('placeholder', 'Last name');
-input1_2.setAttribute('required', 'true');
 
 // second inputs block
 const input2_1 = document.createElement('input');
@@ -36,7 +35,6 @@ const input2_2 = document.createElement('input');
 div2.append(input2_1, input2_2);
 input2_1.setAttribute('type', 'text');
 input2_1.setAttribute('placeholder', 'Display Name');
-input2_1.setAttribute('required', 'true');
 input2_2.setAttribute('type', 'email');
 input2_2.setAttribute('placeholder', 'Email Address');
 input2_2.setAttribute('required', 'true');
@@ -47,10 +45,8 @@ const input3_2 = document.createElement('input');
 div3.append(input3_1, input3_2);
 input3_1.setAttribute('type', 'password');
 input3_1.setAttribute('placeholder', 'Password');
-input3_1.setAttribute('required', 'true');
 input3_2.setAttribute('type', 'password');
 input3_2.setAttribute('placeholder', 'Password Confirmation');
-input3_2.setAttribute('required', 'true');
 
 // first radio-container
 div4.classList.add('radio-container');
@@ -61,8 +57,9 @@ const p4_1 = document.createElement('p');
 div4.append(inputRadio4_1);
 div4.append(div4_1);
 inputRadio4_1.setAttribute('type', 'radio');
+inputRadio4_1.setAttribute('name', 'radio');
 inputRadio4_1.setAttribute('id', 'buyer');
-inputRadio4_1.setAttribute('checked', 'true');
+inputRadio4_1.setAttribute('required', 'true');
 div4_1.append(label4_1, p4_1);
 label4_1.setAttribute('for', 'buyer');
 label4_1.append('Join As a Buyer');
@@ -79,9 +76,10 @@ const p5_1 = document.createElement('p');
 div5.append(inputRadio5_1);
 div5.append(div5_1);
 inputRadio5_1.setAttribute('type', 'radio');
-inputRadio5_1.setAttribute('id', 'buyer');
+inputRadio5_1.setAttribute('name', 'radio');
+inputRadio5_1.setAttribute('id', 'seller');
 div5_1.append(label5_1, p5_1);
-label5_1.setAttribute('for', 'buyer');
+label5_1.setAttribute('for', 'seller');
 label5_1.append('Join As a Creative or Marketplace Seller');
 p5_1.append(
   'I plan to submit name ideas, Logo designs or sell names in Domain Marketplace',
