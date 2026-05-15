@@ -1,102 +1,139 @@
 'use strict';
 
-// base structure
-const body = document.body;
-const form = document.createElement('form');
-body.append(form);
-const h1 = document.createElement('h1');
-const p = document.createElement('p');
-const div1 = document.createElement('div');
-const div2 = document.createElement('div');
-const div3 = document.createElement('div');
-const div4 = document.createElement('div');
-const div5 = document.createElement('div');
-const div6 = document.createElement('div');
-const submitBtn = document.createElement('input');
-form.append(h1, p, div1, div2, div3, div4, div5, div6, submitBtn);
+/**
+ * The function creates an element with the given tag, attributes and text
+ * @param {string} tag
+ * @param {object} attrs
+ * @param {string} text
+ */
+const addElement = (tag, attrs = {}, text = '') => {
+  const element = document.createElement(tag);
+  for (const attr in attrs) {
+    element.setAttribute(`${attr}`, `${attrs[attr]}`);
+  }
+  if (text) {
+    element.textContent = String(text);
+  }
 
-// inscriptions
-h1.append('Create an account');
-p.append('We always keep your name and email adress private.');
+  return element;
+};
+
+// base structure
+const form = addElement('form');
+document.body.append(form);
+const heading = addElement('h1', {}, 'Create an account');
+const quote = addElement(
+  'p',
+  {},
+  'We always keep your name and email adress private.',
+);
+const inputContainer1 = addElement('div');
+const inputContainer2 = addElement('div');
+const inputContainer3 = addElement('div');
+const radioContainer1 = addElement('div');
+const radioContainer2 = addElement('div');
+const checkboxContainer = addElement('div');
+const submitBtn = addElement('input', {
+  type: 'submit',
+  value: 'Create account',
+});
+form.append(
+  heading,
+  quote,
+  inputContainer1,
+  inputContainer2,
+  inputContainer3,
+  radioContainer1,
+  radioContainer2,
+  checkboxContainer,
+  submitBtn,
+);
 
 // first inputs block
-const input1_1 = document.createElement('input');
-const input1_2 = document.createElement('input');
-div1.append(input1_1, input1_2);
-input1_1.setAttribute('type', 'text');
-input1_1.setAttribute('placeholder', 'First name');
-input1_1.setAttribute('required', 'true');
-input1_2.setAttribute('type', 'text');
-input1_2.setAttribute('placeholder', 'Last name');
+const fNameInput = addElement('input', {
+  type: 'text',
+  placeholder: 'First name',
+  required: true,
+});
+const lNamInput = addElement('input', {
+  type: 'text',
+  placeholder: 'Last name',
+  required: true,
+});
+inputContainer1.append(fNameInput, lNamInput);
 
 // second inputs block
-const input2_1 = document.createElement('input');
-const input2_2 = document.createElement('input');
-div2.append(input2_1, input2_2);
-input2_1.setAttribute('type', 'text');
-input2_1.setAttribute('placeholder', 'Display Name');
-input2_2.setAttribute('type', 'email');
-input2_2.setAttribute('placeholder', 'Email Address');
-input2_2.setAttribute('required', 'true');
+const displayNameInput = addElement('input', {
+  type: 'text',
+  placeholder: 'Display Name',
+});
+const emailInput = addElement('input', {
+  type: 'email',
+  placeholder: 'Email Address',
+  required: true,
+});
+inputContainer2.append(displayNameInput, emailInput);
 
 // third inputs block
-const input3_1 = document.createElement('input');
-const input3_2 = document.createElement('input');
-div3.append(input3_1, input3_2);
-input3_1.setAttribute('type', 'password');
-input3_1.setAttribute('placeholder', 'Password');
-input3_2.setAttribute('type', 'password');
-input3_2.setAttribute('placeholder', 'Password Confirmation');
+const passwordInput = addElement('input', {
+  type: 'password',
+  placeholder: 'Password',
+  required: true,
+});
+const passwordConfirmInput = addElement('input', {
+  type: 'password',
+  placeholder: 'Password Confirmation',
+  required: true,
+});
+inputContainer3.append(passwordInput, passwordConfirmInput);
 
 // first radio-container
-div4.classList.add('radio-container');
-const inputRadio4_1 = document.createElement('input');
-const div4_1 = document.createElement('div');
-const label4_1 = document.createElement('label');
-const p4_1 = document.createElement('p');
-div4.append(inputRadio4_1);
-div4.append(div4_1);
-inputRadio4_1.setAttribute('type', 'radio');
-inputRadio4_1.setAttribute('name', 'radio');
-inputRadio4_1.setAttribute('id', 'buyer');
-inputRadio4_1.setAttribute('required', 'true');
-div4_1.append(label4_1, p4_1);
-label4_1.setAttribute('for', 'buyer');
-label4_1.append('Join As a Buyer');
-p4_1.append(
+radioContainer1.classList.add('radio-container');
+const radioBtn1 = addElement('input', {
+  type: 'radio',
+  name: 'radio',
+  id: 'buyer',
+  required: true,
+});
+const radioInscriptionsContainer1 = addElement('div');
+const radioLabel1 = addElement('label', { for: 'buyer' }, 'Join As a Buyer');
+const radioInscription1 = addElement(
+  'p',
+  {},
   'I am looking for a Name, Logo or Tagline for my busyness, brand or product',
 );
+radioContainer1.append(radioBtn1);
+radioContainer1.append(radioInscriptionsContainer1);
+radioInscriptionsContainer1.append(radioLabel1, radioInscription1);
 
 // second radio-container
-div5.classList.add('radio-container');
-const inputRadio5_1 = document.createElement('input');
-const div5_1 = document.createElement('div');
-const label5_1 = document.createElement('label');
-const p5_1 = document.createElement('p');
-div5.append(inputRadio5_1);
-div5.append(div5_1);
-inputRadio5_1.setAttribute('type', 'radio');
-inputRadio5_1.setAttribute('name', 'radio');
-inputRadio5_1.setAttribute('id', 'seller');
-div5_1.append(label5_1, p5_1);
-label5_1.setAttribute('for', 'seller');
-label5_1.append('Join As a Creative or Marketplace Seller');
-p5_1.append(
+radioContainer2.classList.add('radio-container');
+const radioBtn2 = addElement('input', {
+  type: 'radio',
+  name: 'radio',
+  id: 'seller',
+});
+const radioInscriptionsContainer2 = addElement('div');
+const radioLabel2 = addElement(
+  'label',
+  { for: 'seller' },
+  'Join As a Creative or Marketplace Seller',
+);
+const radioInscription2 = addElement(
+  'p',
+  {},
   'I plan to submit name ideas, Logo designs or sell names in Domain Marketplace',
 );
+radioContainer2.append(radioBtn2);
+radioContainer2.append(radioInscriptionsContainer2);
+radioInscriptionsContainer2.append(radioLabel2, radioInscription2);
 
 // checkbox container
-div6.classList.add('checkbox-container');
-const input6_1 = document.createElement('input');
-const label6_1 = document.createElement('label');
-div6.append(input6_1, label6_1);
-input6_1.setAttribute('type', 'checkbox');
-input6_1.setAttribute('id', 'allow');
-label6_1.setAttribute('for', 'allow');
-label6_1.append(
+checkboxContainer.classList.add('checkbox-container');
+const checkboxInput = addElement('input', { type: 'checkbox', id: 'allow' });
+const checkboxLabel = addElement(
+  'label',
+  { for: 'allow' },
   'Allow Squadhelp to send marketing/promotional offers from time to time',
 );
-
-// submit button
-submitBtn.setAttribute('type', 'submit');
-submitBtn.setAttribute('value', 'Create account');
+checkboxContainer.append(checkboxInput, checkboxLabel);
