@@ -1,12 +1,13 @@
 'use strict';
 
 /**
- * The function creates an element with the given tag, attributes and text
+ * The function creates an element with the given tag, attributes, text and classes
  * @param {string} tag
  * @param {object} attrs
  * @param {string} text
+ * @param {string[]} classes
  */
-const addElement = (tag, attrs = {}, text = '') => {
+const addElement = (tag, attrs = {}, text = '', classes = []) => {
   const element = document.createElement(tag);
   for (const attr in attrs) {
     element.setAttribute(`${attr}`, `${attrs[attr]}`);
@@ -14,6 +15,7 @@ const addElement = (tag, attrs = {}, text = '') => {
   if (text) {
     element.textContent = String(text);
   }
+  element.classList.add(...classes);
 
   return element;
 };
@@ -27,12 +29,12 @@ const quote = addElement(
   {},
   'We always keep your name and email adress private.',
 );
-const inputContainer1 = addElement('div');
-const inputContainer2 = addElement('div');
-const inputContainer3 = addElement('div');
-const radioContainer1 = addElement('div');
-const radioContainer2 = addElement('div');
-const checkboxContainer = addElement('div');
+const nameContainer = addElement('div');
+const displayNameAndEmailContainer = addElement('div');
+const passwordContainer = addElement('div');
+const buyerRadioContainer = addElement('div');
+const sellerRadioContainer = addElement('div');
+const allowCheckboxContainer = addElement('div', {}, '', ['checkbox-container']);
 const submitBtn = addElement('input', {
   type: 'submit',
   value: 'Create account',
@@ -40,12 +42,12 @@ const submitBtn = addElement('input', {
 form.append(
   heading,
   quote,
-  inputContainer1,
-  inputContainer2,
-  inputContainer3,
-  radioContainer1,
-  radioContainer2,
-  checkboxContainer,
+  nameContainer,
+  displayNameAndEmailContainer,
+  passwordContainer,
+  buyerRadioContainer,
+  sellerRadioContainer,
+  allowCheckboxContainer,
   submitBtn,
 );
 
@@ -60,7 +62,7 @@ const lNamInput = addElement('input', {
   placeholder: 'Last name',
   required: true,
 });
-inputContainer1.append(fNameInput, lNamInput);
+nameContainer.append(fNameInput, lNamInput);
 
 // second inputs block
 const displayNameInput = addElement('input', {
@@ -72,7 +74,7 @@ const emailInput = addElement('input', {
   placeholder: 'Email Address',
   required: true,
 });
-inputContainer2.append(displayNameInput, emailInput);
+displayNameAndEmailContainer.append(displayNameInput, emailInput);
 
 // third inputs block
 const passwordInput = addElement('input', {
@@ -85,10 +87,10 @@ const passwordConfirmInput = addElement('input', {
   placeholder: 'Password Confirmation',
   required: true,
 });
-inputContainer3.append(passwordInput, passwordConfirmInput);
+passwordContainer.append(passwordInput, passwordConfirmInput);
 
 // first radio-container
-radioContainer1.classList.add('radio-container');
+buyerRadioContainer.classList.add('radio-container');
 const radioBtn1 = addElement('input', {
   type: 'radio',
   name: 'radio',
@@ -102,12 +104,12 @@ const radioInscription1 = addElement(
   {},
   'I am looking for a Name, Logo or Tagline for my busyness, brand or product',
 );
-radioContainer1.append(radioBtn1);
-radioContainer1.append(radioInscriptionsContainer1);
+buyerRadioContainer.append(radioBtn1);
+buyerRadioContainer.append(radioInscriptionsContainer1);
 radioInscriptionsContainer1.append(radioLabel1, radioInscription1);
 
 // second radio-container
-radioContainer2.classList.add('radio-container');
+sellerRadioContainer.classList.add('radio-container');
 const radioBtn2 = addElement('input', {
   type: 'radio',
   name: 'radio',
@@ -124,16 +126,15 @@ const radioInscription2 = addElement(
   {},
   'I plan to submit name ideas, Logo designs or sell names in Domain Marketplace',
 );
-radioContainer2.append(radioBtn2);
-radioContainer2.append(radioInscriptionsContainer2);
+sellerRadioContainer.append(radioBtn2);
+sellerRadioContainer.append(radioInscriptionsContainer2);
 radioInscriptionsContainer2.append(radioLabel2, radioInscription2);
 
 // checkbox container
-checkboxContainer.classList.add('checkbox-container');
-const checkboxInput = addElement('input', { type: 'checkbox', id: 'allow' });
-const checkboxLabel = addElement(
+const allowInput = addElement('input', { type: 'checkbox', id: 'allow' });
+const allowLabel = addElement(
   'label',
   { for: 'allow' },
   'Allow Squadhelp to send marketing/promotional offers from time to time',
 );
-checkboxContainer.append(checkboxInput, checkboxLabel);
+allowCheckboxContainer.append(allowInput, allowLabel);
