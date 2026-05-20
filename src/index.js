@@ -1,5 +1,14 @@
 'use strict';
 
+class Person {
+  constructor(firstName, lastName, displayName, email) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.displayName = displayName;
+    this.email = email;
+  }
+}
+
 /**
  * The function creates an element with the given tag, attributes, text and classes
  * @param {string} tag
@@ -7,7 +16,7 @@
  * @param {string} text
  * @param {string[]} classes
  */
-const addElement = (tag, attrs = {}, text = '', classes = []) => {
+function addElement(tag, attrs = {}, text = '', classes = []) {
   const element = document.createElement(tag);
   for (const attr in attrs) {
     element.setAttribute(`${attr}`, `${attrs[attr]}`);
@@ -18,7 +27,26 @@ const addElement = (tag, attrs = {}, text = '', classes = []) => {
   element.classList.add(...classes);
 
   return element;
-};
+}
+
+
+function addToStorage(e) {
+  try {
+    if (fNameInput.value === '')
+      throw new Error('You must enter a first name!');
+    if (lNameInput.value === '') throw new Error('You must enter a last name!');
+    if (emailInput.value === '') throw new Error('You must enter an email!');
+    const user = new Person(
+      fNameInput.value,
+      lNameInput.value,
+      displayNameInput.value !== '' ? displayNameInput.value : 'undefined',
+      emailInput.value,
+    );
+    localStorage.setItem('User', JSON.stringify(user));
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 // base structure
 const form = addElement('form');
@@ -34,7 +62,9 @@ const displayNameAndEmailContainer = addElement('div');
 const passwordContainer = addElement('div');
 const buyerRadioContainer = addElement('div');
 const sellerRadioContainer = addElement('div');
-const allowCheckboxContainer = addElement('div', {}, '', ['checkbox-container']);
+const allowCheckboxContainer = addElement('div', {}, '', [
+  'checkbox-container',
+]);
 const submitBtn = addElement('input', {
   type: 'submit',
   value: 'Create account',
@@ -57,12 +87,12 @@ const fNameInput = addElement('input', {
   placeholder: 'First name',
   required: true,
 });
-const lNamInput = addElement('input', {
+const lNameInput = addElement('input', {
   type: 'text',
   placeholder: 'Last name',
   required: true,
 });
-nameContainer.append(fNameInput, lNamInput);
+nameContainer.append(fNameInput, lNameInput);
 
 // second inputs block
 const displayNameInput = addElement('input', {
@@ -138,3 +168,6 @@ const allowLabel = addElement(
   'Allow Squadhelp to send marketing/promotional offers from time to time',
 );
 allowCheckboxContainer.append(allowInput, allowLabel);
+
+// submitBtn
+submitBtn.addEventListener('click', addToStorage);
