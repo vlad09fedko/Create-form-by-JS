@@ -110,3 +110,11 @@ input[type='submit'] {
   background-color: #28d2d1;
   cursor: pointer;
 }
+
+.invalid-value {
+  max-width: 300px;
+  color: red;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border: 2px solid red;
+}

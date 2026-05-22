@@ -20,6 +20,41 @@ const addElement = (tag, attrs = {}, text = '', classes = []) => {
   return element;
 };
 
+function checkEmail(e) {
+  try {
+    const regExp1 = /^[a-zA-Z0-9._%+-]+/;
+    const regExp2 = /^[a-zA-Z0-9._%+-]+@/;
+    const regExp3 = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+/;
+    const regExp4 = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\./;
+    const regExp5 = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!regExp5.test(e.target.value) && e.target.value !== '') {
+      errorMsg.classList.add('invalid-value');
+      if (!regExp5.test(e.target.value)) {
+        errorMsg.textContent =
+        'Третя частина повинна мати лише A-Z, a-z у числі від 2 символів';
+      }
+      if (!regExp4.test(e.target.value)) {
+        errorMsg.textContent = 'Після другої частини повинна бути крапка';
+      }
+      if (!regExp3.test(e.target.value)) {
+        errorMsg.textContent = 'Після @ повинні бути лише A-z, a-z, 0-9, ., -';
+      }
+      if (!regExp2.test(e.target.value)) {
+        errorMsg.textContent = 'Після першої частини повиннен бути символ @';
+      }
+      if (!regExp1.test(e.target.value)) {
+        errorMsg.textContent =
+          'Перша частина повинна мати лише A-Z, a-z, 0-9, ., _, %, +, -';
+      }
+    } else {
+      errorMsg.textContent = ''
+      errorMsg.classList.remove('invalid-value')
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 // base structure
 const form = addElement('form');
 document.body.append(form);
@@ -34,7 +69,9 @@ const displayNameAndEmailContainer = addElement('div');
 const passwordContainer = addElement('div');
 const buyerRadioContainer = addElement('div');
 const sellerRadioContainer = addElement('div');
-const allowCheckboxContainer = addElement('div', {}, '', ['checkbox-container']);
+const allowCheckboxContainer = addElement('div', {}, '', [
+  'checkbox-container',
+]);
 const submitBtn = addElement('input', {
   type: 'submit',
   value: 'Create account',
@@ -69,12 +106,17 @@ const displayNameInput = addElement('input', {
   type: 'text',
   placeholder: 'Display Name',
 });
+const emailContainer = addElement('div');
 const emailInput = addElement('input', {
   type: 'email',
   placeholder: 'Email Address',
   required: true,
 });
-displayNameAndEmailContainer.append(displayNameInput, emailInput);
+const errorMsg = addElement('div');
+displayNameAndEmailContainer.append(displayNameInput, emailContainer);
+emailContainer.append(emailInput);
+emailContainer.append(errorMsg);
+emailInput.addEventListener('keyup', checkEmail);
 
 // third inputs block
 const passwordInput = addElement('input', {
