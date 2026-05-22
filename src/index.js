@@ -28,27 +28,59 @@ function checkEmail(e) {
     const regExp4 = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\./;
     const regExp5 = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!regExp5.test(e.target.value) && e.target.value !== '') {
-      errorMsg.classList.add('invalid-value');
+      emailErrorMsg.classList.add('invalid-value');
       if (!regExp5.test(e.target.value)) {
-        errorMsg.textContent =
-        'Третя частина повинна мати лише A-Z, a-z у числі від 2 символів';
+        emailErrorMsg.textContent =
+          'Третя частина повинна мати лише A-Z, a-z у числі від 2 символів';
       }
       if (!regExp4.test(e.target.value)) {
-        errorMsg.textContent = 'Після другої частини повинна бути крапка';
+        emailErrorMsg.textContent = 'Після другої частини повинна бути крапка';
       }
       if (!regExp3.test(e.target.value)) {
-        errorMsg.textContent = 'Після @ повинні бути лише A-z, a-z, 0-9, ., -';
+        emailErrorMsg.textContent =
+          'Після @ повинні бути лише A-z, a-z, 0-9, ., -';
       }
       if (!regExp2.test(e.target.value)) {
-        errorMsg.textContent = 'Після першої частини повиннен бути символ @';
+        emailErrorMsg.textContent =
+          'Після першої частини повиннен бути символ @';
       }
       if (!regExp1.test(e.target.value)) {
         errorMsg.textContent =
           'Перша частина повинна мати лише A-Z, a-z, 0-9, ., _, %, +, -';
       }
     } else {
-      errorMsg.textContent = ''
-      errorMsg.classList.remove('invalid-value')
+      emailErrorMsg.textContent = '';
+      emailErrorMsg.classList.remove('invalid-value');
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+function checkPassword(e) {
+  try {
+    if (e.target.value !== '' && !/^.{4,24}$/.test(e.target.value)) {
+      passwordErrorMsg.classList.add('invalid-value');
+      passwordErrorMsg.textContent =
+        'Пароль повинен бути довжиної від 4 до 24 символів';
+    } else {
+      passwordErrorMsg.classList.remove('invalid-value');
+      passwordErrorMsg.textContent = '';
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+function checkConfirmPassword() {
+  try {
+    if (passwordInput !== '' && passwordInput.value !== passwordConfirmInput.value) {
+      passwordConfirmErrorMsg.classList.add('invalid-value');
+      passwordConfirmErrorMsg.textContent =
+        'Паролі у полі пароля та підтвердження пароля не збігаються';
+    } else {
+      passwordConfirmErrorMsg.classList.remove('invalid-value');
+      passwordConfirmErrorMsg.textContent = '';
     }
   } catch (err) {
     console.log(err);
@@ -66,7 +98,7 @@ const quote = addElement(
 );
 const nameContainer = addElement('div');
 const displayNameAndEmailContainer = addElement('div');
-const passwordContainer = addElement('div');
+const passwordsContainer = addElement('div');
 const buyerRadioContainer = addElement('div');
 const sellerRadioContainer = addElement('div');
 const allowCheckboxContainer = addElement('div', {}, '', [
@@ -81,7 +113,7 @@ form.append(
   quote,
   nameContainer,
   displayNameAndEmailContainer,
-  passwordContainer,
+  passwordsContainer,
   buyerRadioContainer,
   sellerRadioContainer,
   allowCheckboxContainer,
@@ -112,24 +144,31 @@ const emailInput = addElement('input', {
   placeholder: 'Email Address',
   required: true,
 });
-const errorMsg = addElement('div');
+const emailErrorMsg = addElement('div');
 displayNameAndEmailContainer.append(displayNameInput, emailContainer);
 emailContainer.append(emailInput);
-emailContainer.append(errorMsg);
+emailContainer.append(emailErrorMsg);
 emailInput.addEventListener('keyup', checkEmail);
 
 // third inputs block
+const passwordContainer = addElement('div');
 const passwordInput = addElement('input', {
   type: 'password',
   placeholder: 'Password',
   required: true,
 });
+const passwordErrorMsg = addElement('div');
+const passwordConfirmContainer = addElement('div');
 const passwordConfirmInput = addElement('input', {
   type: 'password',
   placeholder: 'Password Confirmation',
   required: true,
 });
-passwordContainer.append(passwordInput, passwordConfirmInput);
+const passwordConfirmErrorMsg = addElement('div');
+passwordsContainer.append(passwordContainer, passwordConfirmContainer);
+passwordContainer.append(passwordInput, passwordErrorMsg);
+passwordConfirmContainer.append(passwordConfirmInput, passwordConfirmErrorMsg);
+passwordInput.addEventListener('keyup', checkPassword);
 
 // first radio-container
 buyerRadioContainer.classList.add('radio-container');
@@ -180,3 +219,5 @@ const allowLabel = addElement(
   'Allow Squadhelp to send marketing/promotional offers from time to time',
 );
 allowCheckboxContainer.append(allowInput, allowLabel);
+
+submitBtn.addEventListener('click', checkConfirmPassword);
