@@ -1,11 +1,8 @@
 'use strict';
 
 class Person {
-  constructor(firstName, lastName, displayName, email) {
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.displayName = displayName;
-    this.email = email;
+  constructor(...args) {
+    args.forEach(({ name, value }) => (this[name] = value));
   }
 }
 
@@ -14,7 +11,7 @@ class Person {
  * @param {string} tag
  * @param {object} attrs
  * @param {string} text
-*/
+ */
 function addElement(tag, attrs = {}, text = '') {
   const element = document.createElement(tag);
   for (const attr in attrs) {
@@ -23,23 +20,20 @@ function addElement(tag, attrs = {}, text = '') {
   if (text) {
     element.textContent = String(text);
   }
-  
+
   return element;
+}
+
+function checkDisplayName(key, value) {
+  if (key === 'displayName' && value === '') return 'undefined';
+  return value;
 }
 
 function addToStorage() {
   try {
-    if (fNameInput.value === '')
-      throw new Error('You must enter a first name!');
-    if (lNameInput.value === '') throw new Error('You must enter a last name!');
-    if (emailInput.value === '') throw new Error('You must enter an email!');
-    const user = new Person(
-      fNameInput.value,
-      lNameInput.value,
-      displayNameInput.value !== '' ? displayNameInput.value : 'undefined',
-      emailInput.value,
-    );
-    localStorage.setItem('User', JSON.stringify(user));
+    const data = Array.from(document.querySelectorAll('.input-field[name]'));
+    const user = new Person(...data);
+    localStorage.setItem(user.lName, JSON.stringify(user, checkDisplayName, 2));
   } catch (err) {
     console.log(err);
   }
@@ -53,7 +47,7 @@ const quote = addElement(
   {},
   'We always keep your name and email adress private.',
 );
-const inputsContainer = addElement('div', {class: 'inputs-container'});
+const inputsContainer = addElement('div', { class: 'inputs-container' });
 const buyerRadioContainer = addElement('div');
 const sellerRadioContainer = addElement('div');
 const allowCheckboxContainer = addElement(
@@ -76,6 +70,7 @@ const fNameInput = addElement(
     type: 'text',
     placeholder: 'First name',
     required: true,
+    name: 'fName',
   },
   '',
 );
@@ -86,6 +81,7 @@ const lNameInput = addElement(
     type: 'text',
     placeholder: 'Last name',
     required: true,
+    name: 'lName',
   },
   '',
 );
@@ -94,7 +90,12 @@ const lNameInput = addElement(
 const displayNameAndEmailContainer = addElement('div');
 const displayNameInput = addElement(
   'input',
-  { class: 'input-field', type: 'text', placeholder: 'Display Name' },
+  {
+    class: 'input-field',
+    type: 'text',
+    placeholder: 'Display Name',
+    name: 'displayName',
+  },
   '',
 );
 const emailInput = addElement(
@@ -104,6 +105,7 @@ const emailInput = addElement(
     type: 'email',
     placeholder: 'Email Address',
     required: true,
+    name: 'email',
   },
   '',
 );
@@ -167,7 +169,10 @@ const radioInscription2 = addElement(
 );
 
 // checkbox container
-const allowInput = addElement('input', { type: 'checkbox', id: 'allow' });
+const allowInput = addElement('input', {
+  type: 'checkbox',
+  id: 'allow',
+});
 const allowLabel = addElement(
   'label',
   { for: 'allow' },
@@ -195,22 +200,16 @@ inputsContainer.append(
   passwordContainer,
 );
 
-{
-  nameContainer.append(fNameInput, lNameInput);
-  displayNameAndEmailContainer.append(displayNameInput, emailInput);
-  passwordContainer.append(passwordInput, passwordConfirmInput);
-}
+nameContainer.append(fNameInput, lNameInput);
+displayNameAndEmailContainer.append(displayNameInput, emailInput);
+passwordContainer.append(passwordInput, passwordConfirmInput);
 
-{
-  buyerRadioContainer.append(radioBtn1);
-  buyerRadioContainer.append(radioInscriptionsContainer1);
-  radioInscriptionsContainer1.append(radioLabel1, radioInscription1);
-}
+buyerRadioContainer.append(radioBtn1);
+buyerRadioContainer.append(radioInscriptionsContainer1);
+radioInscriptionsContainer1.append(radioLabel1, radioInscription1);
 
-{
-  sellerRadioContainer.append(radioBtn2);
-  sellerRadioContainer.append(radioInscriptionsContainer2);
-  radioInscriptionsContainer2.append(radioLabel2, radioInscription2);
-}
+sellerRadioContainer.append(radioBtn2);
+sellerRadioContainer.append(radioInscriptionsContainer2);
+radioInscriptionsContainer2.append(radioLabel2, radioInscription2);
 
 allowCheckboxContainer.append(allowInput, allowLabel);
