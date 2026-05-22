@@ -74,10 +74,14 @@ function checkPassword(e) {
 
 function checkConfirmPassword() {
   try {
-    if (passwordInput !== '' && passwordInput.value !== passwordConfirmInput.value) {
+    if (
+      passwordInput !== '' &&
+      passwordInput.value !== passwordConfirmInput.value
+    ) {
       passwordConfirmErrorMsg.classList.add('invalid-value');
       passwordConfirmErrorMsg.textContent =
         'Паролі у полі пароля та підтвердження пароля не збігаються';
+      throw new Error('Correct your password confirmation');
     } else {
       passwordConfirmErrorMsg.classList.remove('invalid-value');
       passwordConfirmErrorMsg.textContent = '';
