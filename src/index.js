@@ -27,26 +27,21 @@ function checkEmail(e) {
     const regExp3 = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+/;
     const regExp4 = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\./;
     const regExp5 = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!regExp5.test(e.target.value) && e.target.value !== '') {
+    if (e.target.value !== '' && !regExp5.test(e.target.value)) {
       emailErrorMsg.classList.add('invalid-value');
-      if (!regExp5.test(e.target.value)) {
+      emailErrorMsg.textContent =
+        'Третя частина повинна мати лише A-Z, a-z у числі від 2 символів';
+      if (!regExp1.test(e.target.value)) {
         emailErrorMsg.textContent =
-          'Третя частина повинна мати лише A-Z, a-z у числі від 2 символів';
-      }
-      if (!regExp4.test(e.target.value)) {
-        emailErrorMsg.textContent = 'Після другої частини повинна бути крапка';
-      }
-      if (!regExp3.test(e.target.value)) {
-        emailErrorMsg.textContent =
-          'Після @ повинні бути лише A-z, a-z, 0-9, ., -';
-      }
-      if (!regExp2.test(e.target.value)) {
+          'Перша частина повинна мати лише A-Z, a-z, 0-9, ., _, %, +, -';
+      } else if (!regExp2.test(e.target.value)) {
         emailErrorMsg.textContent =
           'Після першої частини повиннен бути символ @';
-      }
-      if (!regExp1.test(e.target.value)) {
-        errorMsg.textContent =
-          'Перша частина повинна мати лише A-Z, a-z, 0-9, ., _, %, +, -';
+      } else if (!regExp3.test(e.target.value)) {
+        emailErrorMsg.textContent =
+          'Після @ повинні бути лише A-z, a-z, 0-9, ., -';
+      } else if (!regExp4.test(e.target.value)) {
+        emailErrorMsg.textContent = 'Після другої частини повинна бути крапка';
       }
     } else {
       emailErrorMsg.textContent = '';
@@ -75,13 +70,13 @@ function checkPassword(e) {
 function checkConfirmPassword() {
   try {
     if (
-      passwordInput !== '' &&
+      passwordInput.value !== '' &&
+      passwordConfirmInput.value !== '' &&
       passwordInput.value !== passwordConfirmInput.value
     ) {
       passwordConfirmErrorMsg.classList.add('invalid-value');
       passwordConfirmErrorMsg.textContent =
         'Паролі у полі пароля та підтвердження пароля не збігаються';
-      throw new Error('Correct your password confirmation');
     } else {
       passwordConfirmErrorMsg.classList.remove('invalid-value');
       passwordConfirmErrorMsg.textContent = '';
@@ -173,6 +168,8 @@ passwordsContainer.append(passwordContainer, passwordConfirmContainer);
 passwordContainer.append(passwordInput, passwordErrorMsg);
 passwordConfirmContainer.append(passwordConfirmInput, passwordConfirmErrorMsg);
 passwordInput.addEventListener('keyup', checkPassword);
+passwordInput.addEventListener('keyup', checkConfirmPassword);
+passwordConfirmInput.addEventListener('keyup', checkConfirmPassword);
 
 // first radio-container
 buyerRadioContainer.classList.add('radio-container');
@@ -223,5 +220,3 @@ const allowLabel = addElement(
   'Allow Squadhelp to send marketing/promotional offers from time to time',
 );
 allowCheckboxContainer.append(allowInput, allowLabel);
-
-submitBtn.addEventListener('click', checkConfirmPassword);
