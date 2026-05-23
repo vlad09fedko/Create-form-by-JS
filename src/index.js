@@ -15,7 +15,7 @@ class Person {
 function addElement(tag, attrs = {}, text = '') {
   const element = document.createElement(tag);
   for (const attr in attrs) {
-    element.setAttribute(`${attr}`, `${attrs[attr]}`);
+    element.setAttribute(attr, attrs[attr]);
   }
   if (text) {
     element.textContent = String(text);
@@ -29,9 +29,10 @@ function checkDisplayName(key, value) {
   return value;
 }
 
-function addToStorage() {
+function addToStorage(e) {
   try {
-    if (isValidEmail && isValidPassword) {
+    e.preventDefault();
+    if (isValidEmail && isValidPassword && isValidConfirmPassword) {
       const data = Array.from(document.querySelectorAll('.input-field[name]'));
       const user = new Person(...data);
       localStorage.setItem(
@@ -104,14 +105,19 @@ function checkEmail(e) {
       step => !step.pattern.test(e.target.value),
     );
 
+    emailErrorMsg.textContent = '';
+    emailErrorMsg.classList.remove('invalid-value');
     if (failedStep && e.target.value !== '') {
       emailErrorMsg.classList.add('invalid-value');
       emailErrorMsg.textContent = failedStep.msg;
       isValidEmail = false;
     } else {
-      emailErrorMsg.textContent = '';
       emailErrorMsg.classList.remove('invalid-value');
+      emailErrorMsg.textContent = '';
       isValidEmail = true;
+    }
+    if (e.target.value === '') {
+      isValidEmail = false;
     }
   } catch (err) {
     console.log(err);
@@ -130,6 +136,9 @@ function checkPassword(e) {
       passwordErrorMsg.textContent = '';
       isValidPassword = true;
     }
+    if (e.target.value === '') {
+      isValidPassword = false;
+    }
   } catch (err) {
     console.log(err);
   }
@@ -138,16 +147,18 @@ function checkPassword(e) {
 function checkConfirmPassword() {
   try {
     if (passwordInput.value === '' || passwordConfirmInput.value === '') {
-      isValidPassword = false;
+      passwordConfirmErrorMsg.classList.remove('invalid-value');
+      passwordConfirmErrorMsg.textContent = '';
+      isValidConfirmPassword = false;
     } else if (passwordInput.value !== passwordConfirmInput.value) {
       passwordConfirmErrorMsg.classList.add('invalid-value');
       passwordConfirmErrorMsg.textContent =
         'The passwords in the password and confirmation password fields do not match';
-      isValidPassword = false;
+      isValidConfirmPassword = false;
     } else {
       passwordConfirmErrorMsg.classList.remove('invalid-value');
       passwordConfirmErrorMsg.textContent = '';
-      isValidPassword = true;
+      isValidConfirmPassword = true;
     }
   } catch (err) {
     console.log(err);
@@ -156,6 +167,7 @@ function checkConfirmPassword() {
 
 let isValidEmail = false;
 let isValidPassword = false;
+let isValidConfirmPassword = false;
 
 // base structure
 const form = addElement('form');
@@ -163,7 +175,7 @@ const heading = addElement('h1', {}, 'Create an account');
 const quote = addElement(
   'p',
   {},
-  'We always keep your name and email adress private.',
+  'We always keep your name and email address private.',
 );
 const inputsContainer = addElement('div', { class: 'inputs-container' });
 const buyerRadioContainer = addElement('div');
@@ -229,7 +241,7 @@ const emailInput = addElement(
   '',
 );
 const emailErrorMsg = addElement('div');
-emailInput.addEventListener('keyup', checkEmail);
+emailInput.addEventListener('input', checkEmail);
 
 // password inputs block
 const passwordsContainer = addElement('div');
@@ -259,9 +271,9 @@ const passwordConfirmInput = addElement(
   '',
 );
 const passwordConfirmErrorMsg = addElement('div');
-passwordInput.addEventListener('keyup', checkPassword);
-passwordInput.addEventListener('keyup', checkConfirmPassword);
-passwordConfirmInput.addEventListener('keyup', checkConfirmPassword);
+passwordInput.addEventListener('input', checkPassword);
+passwordConfirmInput.addEventListener('input', checkConfirmPassword);
+passwordInput.addEventListener('input', checkConfirmPassword);
 
 // first radio-container
 buyerRadioContainer.classList.add('radio-container');
@@ -276,7 +288,7 @@ const radioLabel1 = addElement('label', { for: 'buyer' }, 'Join As a Buyer');
 const radioInscription1 = addElement(
   'p',
   {},
-  'I am looking for a Name, Logo or Tagline for my busyness, brand or product',
+  'I am looking for a Name, Logo or Tagline for my business, brand or product',
 );
 
 // second radio-container
@@ -310,7 +322,7 @@ const allowLabel = addElement(
 );
 
 // submitBtn
-submitBtn.addEventListener('click', addToStorage);
+form.addEventListener('submit', addToStorage);
 
 // appending
 document.body.append(form);
