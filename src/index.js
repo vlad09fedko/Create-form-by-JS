@@ -34,9 +34,8 @@ function checkDisplayName(key, value) {
 /**
  * The function adds data from all inputs (except passwords, radio buttons and checkboxes) and outputs them to local storage.
  */
-function addToStorage(e) {
+function addToStorage() {
   try {
-    e.preventDefault();
     if (isValidEmail && isValidPassword && isValidConfirmPassword) {
       const data = Array.from(document.querySelectorAll('.input-field[name]'));
       const user = new Person(...data);
@@ -51,8 +50,8 @@ function addToStorage(e) {
 }
 
 /**
-* The function checks the email entered against a regular expression and displays an error in the UI. 
-*/
+ * The function checks the email entered against a regular expression and displays an error in the UI.
+ */
 function checkEmail(e) {
   try {
     // ~~~~~~~~~~~~ My decision ~~~~~~~~~~~~
@@ -77,9 +76,11 @@ function checkEmail(e) {
     //   } else if (!regExp4.test(e.target.value)) {
     //     emailErrorMsg.textContent = 'There should be a . after the second part';
     //   }
+    //   isValidEmail = false;
     // } else {
     //   emailErrorMsg.textContent = '';
     //   emailErrorMsg.classList.remove('invalid-value');
+    //   isValidEmail = true;
     // }
 
     // ~~~~~~~~~~~~ AI decision ~~~~~~~~~~~~
@@ -156,7 +157,7 @@ function checkPassword(e) {
 }
 
 /**
-* The function checks the password against the password confirmation and displays an error in the UI.
+ * The function checks the password against the password confirmation and displays an error in the UI.
  */
 function checkConfirmPassword() {
   try {
