@@ -1,13 +1,18 @@
 'use strict';
 
+class Person {
+  constructor(...args) {
+    args.forEach(({ name, value }) => (this[name] = value));
+  }
+}
+
 /**
- * The function creates an element with the given tag, attributes, text and classes
+ * The function creates an element with the given tag, attributes, and text
  * @param {string} tag
  * @param {object} attrs
  * @param {string} text
- * @param {string[]} classes
  */
-const addElement = (tag, attrs = {}, text = '', classes = []) => {
+function addElement(tag, attrs = {}, text = '') {
   const element = document.createElement(tag);
   for (const attr in attrs) {
     element.setAttribute(`${attr}`, `${attrs[attr]}`);
@@ -15,10 +20,24 @@ const addElement = (tag, attrs = {}, text = '', classes = []) => {
   if (text) {
     element.textContent = String(text);
   }
-  element.classList.add(...classes);
 
   return element;
-};
+}
+
+function checkDisplayName(key, value) {
+  if (key === 'displayName' && value === '') return 'undefined';
+  return value;
+}
+
+function addToStorage() {
+  try {
+    const data = Array.from(document.querySelectorAll('.input-field[name]'));
+    const user = new Person(...data);
+    localStorage.setItem(user.lName, JSON.stringify(user, checkDisplayName, 2));
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 function checkEmail(e) {
   try {
@@ -88,85 +107,106 @@ function checkConfirmPassword() {
 
 // base structure
 const form = addElement('form');
-document.body.append(form);
 const heading = addElement('h1', {}, 'Create an account');
 const quote = addElement(
   'p',
   {},
   'We always keep your name and email adress private.',
 );
-const nameContainer = addElement('div');
-const displayNameAndEmailContainer = addElement('div');
-const passwordsContainer = addElement('div');
+const inputsContainer = addElement('div', { class: 'inputs-container' });
 const buyerRadioContainer = addElement('div');
 const sellerRadioContainer = addElement('div');
-const allowCheckboxContainer = addElement('div', {}, '', [
-  'checkbox-container',
-]);
+const allowCheckboxContainer = addElement(
+  'div',
+  { class: 'checkbox-container' },
+  '',
+);
 const submitBtn = addElement('input', {
+  class: 'button',
   type: 'submit',
   value: 'Create account',
 });
-form.append(
-  heading,
-  quote,
-  nameContainer,
-  displayNameAndEmailContainer,
-  passwordsContainer,
-  buyerRadioContainer,
-  sellerRadioContainer,
-  allowCheckboxContainer,
-  submitBtn,
+
+// name inputs block
+const nameContainer = addElement('div');
+const fNameInput = addElement(
+  'input',
+  {
+    class: 'input-field',
+    type: 'text',
+    placeholder: 'First name',
+    required: true,
+    name: 'fName',
+  },
+  '',
+);
+const lNameInput = addElement(
+  'input',
+  {
+    class: 'input-field',
+    type: 'text',
+    placeholder: 'Last name',
+    required: true,
+    name: 'lName',
+  },
+  '',
 );
 
-// first inputs block
-const fNameInput = addElement('input', {
-  type: 'text',
-  placeholder: 'First name',
-  required: true,
-});
-const lNamInput = addElement('input', {
-  type: 'text',
-  placeholder: 'Last name',
-  required: true,
-});
-nameContainer.append(fNameInput, lNamInput);
-
-// second inputs block
-const displayNameInput = addElement('input', {
-  type: 'text',
-  placeholder: 'Display Name',
-});
-const emailContainer = addElement('div');
-const emailInput = addElement('input', {
-  type: 'email',
-  placeholder: 'Email Address',
-  required: true,
-});
+// display name and email inputs block
+const displayNameAndEmailContainer = addElement('div');
+const displayNameInput = addElement(
+  'input',
+  {
+    class: 'input-field',
+    type: 'text',
+    placeholder: 'Display Name',
+    name: 'displayName',
+  },
+  '',
+);
+const emailContainer = addElement('div', { class: 'input-container' }); // ?
+const emailInput = addElement(
+  'input',
+  {
+    class: 'input-field',
+    type: 'email',
+    placeholder: 'Email Address',
+    required: true,
+    name: 'email',
+  },
+  '',
+);
 const emailErrorMsg = addElement('div');
-displayNameAndEmailContainer.append(displayNameInput, emailContainer);
-emailContainer.append(emailInput);
-emailContainer.append(emailErrorMsg);
 emailInput.addEventListener('keyup', checkEmail);
 
-// third inputs block
-const passwordContainer = addElement('div');
-const passwordInput = addElement('input', {
-  type: 'password',
-  placeholder: 'Password',
-  required: true,
-});
+// password inputs block
+const passwordsContainer = addElement('div');
+const passwordContainer = addElement('div', { class: 'input-container' });
+const passwordInput = addElement(
+  'input',
+  {
+    class: 'input-field',
+    type: 'password',
+    placeholder: 'Password',
+    required: true,
+  },
+  '',
+);
 const passwordErrorMsg = addElement('div');
-const passwordConfirmContainer = addElement('div');
-const passwordConfirmInput = addElement('input', {
-  type: 'password',
-  placeholder: 'Password Confirmation',
-  required: true,
+const passwordConfirmContainer = addElement('div', {
+  class: 'input-container',
 });
+const passwordConfirmInput = addElement(
+  'input',
+  {
+    class: 'input-field',
+    type: 'password',
+    placeholder: 'Password Confirmation',
+    required: true,
+  },
+  '',
+);
 const passwordConfirmErrorMsg = addElement('div');
-passwordsContainer.append(passwordContainer, passwordConfirmContainer);
-passwordContainer.append(passwordInput, passwordErrorMsg);
-passwordConfirmContainer.append(passwordConfirmInput, passwordConfirmErrorMsg);
 passwordInput.addEventListener('keyup', checkPassword);
 passwordInput.addEventListener('keyup', checkConfirmPassword);
 passwordConfirmInput.addEventListener('keyup', checkConfirmPassword);
@@ -186,9 +226,6 @@ const radioInscription1 = addElement(
   {},
   'I am looking for a Name, Logo or Tagline for my busyness, brand or product',
 );
-buyerRadioContainer.append(radioBtn1);
-buyerRadioContainer.append(radioInscriptionsContainer1);
-radioInscriptionsContainer1.append(radioLabel1, radioInscription1);
 
 // second radio-container
 sellerRadioContainer.classList.add('radio-container');
@@ -208,15 +245,54 @@ const radioInscription2 = addElement(
   {},
   'I plan to submit name ideas, Logo designs or sell names in Domain Marketplace',
 );
-sellerRadioContainer.append(radioBtn2);
-sellerRadioContainer.append(radioInscriptionsContainer2);
-radioInscriptionsContainer2.append(radioLabel2, radioInscription2);
 
 // checkbox container
-const allowInput = addElement('input', { type: 'checkbox', id: 'allow' });
+const allowInput = addElement('input', {
+  type: 'checkbox',
+  id: 'allow',
+});
 const allowLabel = addElement(
   'label',
   { for: 'allow' },
   'Allow Squadhelp to send marketing/promotional offers from time to time',
 );
+
+// submitBtn
+submitBtn.addEventListener('click', addToStorage);
+
+// appending
+document.body.append(form);
+form.append(
+  heading,
+  quote,
+  inputsContainer,
+  buyerRadioContainer,
+  sellerRadioContainer,
+  allowCheckboxContainer,
+  submitBtn,
+);
+
+inputsContainer.append(
+  nameContainer,
+  displayNameAndEmailContainer,
+  passwordsContainer,
+);
+
+nameContainer.append(fNameInput, lNameInput);
+
+displayNameAndEmailContainer.append(displayNameInput, emailContainer);
+emailContainer.append(emailInput, emailErrorMsg);
+
+passwordsContainer.append(passwordContainer, passwordConfirmContainer);
+passwordContainer.append(passwordInput, passwordErrorMsg);
+passwordConfirmContainer.append(passwordConfirmInput, passwordConfirmErrorMsg);
+
+buyerRadioContainer.append(radioBtn1);
+buyerRadioContainer.append(radioInscriptionsContainer1);
+radioInscriptionsContainer1.append(radioLabel1, radioInscription1);
+
+sellerRadioContainer.append(radioBtn2);
+sellerRadioContainer.append(radioInscriptionsContainer2);
+radioInscriptionsContainer2.append(radioLabel2, radioInscription2);
+
 allowCheckboxContainer.append(allowInput, allowLabel);
