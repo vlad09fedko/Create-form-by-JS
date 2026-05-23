@@ -31,9 +31,14 @@ function checkDisplayName(key, value) {
 
 function addToStorage() {
   try {
-    const data = Array.from(document.querySelectorAll('.input-field[name]'));
-    const user = new Person(...data);
-    localStorage.setItem(user.lName, JSON.stringify(user, checkDisplayName, 2));
+    if (isValidEmail && isValidPassword) {
+      const data = Array.from(document.querySelectorAll('.input-field[name]'));
+      const user = new Person(...data);
+      localStorage.setItem(
+        user.lName,
+        JSON.stringify(user, checkDisplayName, 2),
+      );
+    } else throw new Error('You have an error!');
   } catch (err) {
     console.log(err);
   }
@@ -41,30 +46,72 @@ function addToStorage() {
 
 function checkEmail(e) {
   try {
-    const regExp1 = /^[a-zA-Z0-9._%+-]+/;
-    const regExp2 = /^[a-zA-Z0-9._%+-]+@/;
-    const regExp3 = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+/;
-    const regExp4 = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\./;
-    const regExp5 = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (e.target.value !== '' && !regExp5.test(e.target.value)) {
+    // ~~~~~~~~~~~~ My decision ~~~~~~~~~~~~
+    // const regExp1 = /^[a-zA-Z0-9._%+-]+/;
+    // const regExp2 = /^[a-zA-Z0-9._%+-]+@/;
+    // const regExp3 = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+/;
+    // const regExp4 = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\./;
+    // const regExp5 = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    // if (e.target.value !== '' && !regExp5.test(e.target.value)) {
+    //   emailErrorMsg.classList.add('invalid-value');
+    //   emailErrorMsg.textContent =
+    //     'The third part should have only A-Z, a-z in the number of 2 characters or more';
+    //   if (!regExp1.test(e.target.value)) {
+    //     emailErrorMsg.textContent =
+    //       'The first part should only have A-Z, a-z, 0-9, ., _, %, +, -';
+    //   } else if (!regExp2.test(e.target.value)) {
+    //     emailErrorMsg.textContent =
+    //       'The first part must be followed by the @ symbol';
+    //   } else if (!regExp3.test(e.target.value)) {
+    //     emailErrorMsg.textContent =
+    //       'After @ should be only A-z, a-z, 0-9, ., -';
+    //   } else if (!regExp4.test(e.target.value)) {
+    //     emailErrorMsg.textContent = 'There should be a . after the second part';
+    //   }
+    // } else {
+    //   emailErrorMsg.textContent = '';
+    //   emailErrorMsg.classList.remove('invalid-value');
+    // }
+
+    // ~~~~~~~~~~~~ AI decision ~~~~~~~~~~~~
+    const part1 = '[a-zA-Z0-9._%+-]+';
+    const part2 = '[a-zA-Z0-9.-]+';
+    const part3 = '[a-zA-Z]{2,}';
+    const validationSteps = [
+      {
+        pattern: new RegExp(`^${part1}`),
+        msg: 'The first part should only have A-Z, a-z, 0-9, ., _, %, +, -',
+      },
+      {
+        pattern: new RegExp(`^${part1}@`),
+        msg: 'The first part must be followed by the @ symbol',
+      },
+      {
+        pattern: new RegExp(`^${part1}@${part2}`),
+        msg: 'After @ should be only A-z, a-z, 0-9, ., -',
+      },
+      {
+        pattern: new RegExp(`^${part1}@${part2}\\.`),
+        msg: 'There should be a . after the second part',
+      },
+      {
+        pattern: new RegExp(`^${part1}@${part2}\\.${part3}$`),
+        msg: 'The third part should have only A-Z, a-z in the number of 2 characters or more',
+      },
+    ];
+
+    const failedStep = validationSteps.find(
+      step => !step.pattern.test(e.target.value),
+    );
+
+    if (failedStep && e.target.value !== '') {
       emailErrorMsg.classList.add('invalid-value');
-      emailErrorMsg.textContent =
-        'Третя частина повинна мати лише A-Z, a-z у числі від 2 символів';
-      if (!regExp1.test(e.target.value)) {
-        emailErrorMsg.textContent =
-          'Перша частина повинна мати лише A-Z, a-z, 0-9, ., _, %, +, -';
-      } else if (!regExp2.test(e.target.value)) {
-        emailErrorMsg.textContent =
-          'Після першої частини повиннен бути символ @';
-      } else if (!regExp3.test(e.target.value)) {
-        emailErrorMsg.textContent =
-          'Після @ повинні бути лише A-z, a-z, 0-9, ., -';
-      } else if (!regExp4.test(e.target.value)) {
-        emailErrorMsg.textContent = 'Після другої частини повинна бути крапка';
-      }
+      emailErrorMsg.textContent = failedStep.msg;
+      isValidEmail = false;
     } else {
       emailErrorMsg.textContent = '';
       emailErrorMsg.classList.remove('invalid-value');
+      isValidEmail = true;
     }
   } catch (err) {
     console.log(err);
@@ -76,10 +123,12 @@ function checkPassword(e) {
     if (e.target.value !== '' && !/^.{4,24}$/.test(e.target.value)) {
       passwordErrorMsg.classList.add('invalid-value');
       passwordErrorMsg.textContent =
-        'Пароль повинен бути довжиної від 4 до 24 символів';
+        'The password must be between 4 and 24 characters long';
+      isValidPassword = false;
     } else {
       passwordErrorMsg.classList.remove('invalid-value');
       passwordErrorMsg.textContent = '';
+      isValidPassword = true;
     }
   } catch (err) {
     console.log(err);
@@ -88,22 +137,25 @@ function checkPassword(e) {
 
 function checkConfirmPassword() {
   try {
-    if (
-      passwordInput.value !== '' &&
-      passwordConfirmInput.value !== '' &&
-      passwordInput.value !== passwordConfirmInput.value
-    ) {
+    if (passwordInput.value === '' || passwordConfirmInput.value === '') {
+      isValidPassword = false;
+    } else if (passwordInput.value !== passwordConfirmInput.value) {
       passwordConfirmErrorMsg.classList.add('invalid-value');
       passwordConfirmErrorMsg.textContent =
-        'Паролі у полі пароля та підтвердження пароля не збігаються';
+        'The passwords in the password and confirmation password fields do not match';
+      isValidPassword = false;
     } else {
       passwordConfirmErrorMsg.classList.remove('invalid-value');
       passwordConfirmErrorMsg.textContent = '';
+      isValidPassword = true;
     }
   } catch (err) {
     console.log(err);
   }
 }
+
+let isValidEmail = false;
+let isValidPassword = false;
 
 // base structure
 const form = addElement('form');
