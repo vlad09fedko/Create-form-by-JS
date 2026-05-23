@@ -23,12 +23,17 @@ function addElement(tag, attrs = {}, text = '') {
 
   return element;
 }
-
+/**
+ * The function changes the displayName field to undefined if the field is empty. Used as a replacer in the .stringify() method.
+ */
 function checkDisplayName(key, value) {
   if (key === 'displayName' && value === '') return 'undefined';
   return value;
 }
 
+/**
+ * The function adds data from all inputs (except passwords, radio buttons and checkboxes) and outputs them to local storage.
+ */
 function addToStorage(e) {
   try {
     e.preventDefault();
@@ -45,6 +50,9 @@ function addToStorage(e) {
   }
 }
 
+/**
+* The function checks the email entered against a regular expression and displays an error in the UI. 
+*/
 function checkEmail(e) {
   try {
     // ~~~~~~~~~~~~ My decision ~~~~~~~~~~~~
@@ -124,6 +132,9 @@ function checkEmail(e) {
   }
 }
 
+/**
+ * The function checks the password against a regular expression and displays an error in the UI.
+ */
 function checkPassword(e) {
   try {
     if (e.target.value !== '' && !/^.{4,24}$/.test(e.target.value)) {
@@ -144,6 +155,9 @@ function checkPassword(e) {
   }
 }
 
+/**
+* The function checks the password against the password confirmation and displays an error in the UI.
+ */
 function checkConfirmPassword() {
   try {
     if (passwordInput.value === '' || passwordConfirmInput.value === '') {
