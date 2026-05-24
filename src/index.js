@@ -38,7 +38,7 @@ function addToStorage(e) {
   try {
     e.preventDefault();
     if (isValidEmail && isValidPassword && isValidConfirmPassword) {
-      const data = Array.from(document.querySelectorAll('.input-field[name]'));
+      const data = document.querySelectorAll('.input-field[name]');
       const user = new Person(...data);
       localStorage.setItem(
         user.lName,
