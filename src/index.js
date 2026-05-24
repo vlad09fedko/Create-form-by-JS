@@ -34,8 +34,9 @@ function checkDisplayName(key, value) {
 /**
  * The function adds data from all inputs (except passwords, radio buttons and checkboxes) and outputs them to local storage.
  */
-function addToStorage() {
+function addToStorage(e) {
   try {
+    e.preventDefault();
     if (isValidEmail && isValidPassword && isValidConfirmPassword) {
       const data = Array.from(document.querySelectorAll('.input-field[name]'));
       const user = new Person(...data);
@@ -43,6 +44,7 @@ function addToStorage() {
         user.lName,
         JSON.stringify(user, checkDisplayName, 2),
       );
+      console.log(user);
     } else throw new Error('You have an error!');
   } catch (err) {
     console.log(err);
