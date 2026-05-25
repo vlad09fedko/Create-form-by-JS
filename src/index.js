@@ -37,15 +37,17 @@ function checkDisplayName(key, value) {
 function addToStorage(e) {
   try {
     e.preventDefault();
-    if (isValidEmail && isValidPassword && isValidConfirmPassword) {
+    if (!submitBtn.hasAttribute('disabled')) {
+      // ?
       const data = document.querySelectorAll('.input-field[name]');
       const user = new Person(...data);
       localStorage.setItem(
         user.lName,
         JSON.stringify(user, checkDisplayName, 2),
       );
-      console.log(user);
-    } else throw new Error('You have an error!');
+    } else {
+      throw new Error('You have an error!');
+    }
   } catch (err) {
     console.log(err);
   }
@@ -54,7 +56,7 @@ function addToStorage(e) {
 /**
  * The function checks the email entered against a regular expression and displays an error in the UI.
  */
-function checkEmail(e) {
+function checkEmail() {
   try {
     // ~~~~~~~~~~~~ My decision ~~~~~~~~~~~~
     // const regExp1 = /^[a-zA-Z0-9._%+-]+/;
@@ -78,14 +80,15 @@ function checkEmail(e) {
     //   } else if (!regExp4.test(e.target.value)) {
     //     emailErrorMsg.textContent = 'There should be a . after the second part';
     //   }
-    //   isValidEmail = false;
+    //   return false;
     // } else {
-    //   emailErrorMsg.textContent = '';
-    //   emailErrorMsg.classList.remove('invalid-value');
-    //   isValidEmail = true;
+    //   removeError(emailErrorMsg);
+    //   return true;
     // }
 
     // ~~~~~~~~~~~~ AI decision ~~~~~~~~~~~~
+    const value = emailInput.value;
+
     const part1 = '[a-zA-Z0-9._%+-]+';
     const part2 = '[a-zA-Z0-9.-]+';
     const part3 = '[a-zA-Z]{2,}';
@@ -112,23 +115,18 @@ function checkEmail(e) {
       },
     ];
 
-    const failedStep = validationSteps.find(
-      step => !step.pattern.test(e.target.value),
-    );
+    const failedStep = validationSteps.find(step => !step.pattern.test(value));
 
-    emailErrorMsg.textContent = '';
-    emailErrorMsg.classList.remove('invalid-value');
-    if (failedStep && e.target.value !== '') {
-      emailErrorMsg.classList.add('invalid-value');
-      emailErrorMsg.textContent = failedStep.msg;
-      isValidEmail = false;
+    removeError(emailErrorMsg);
+    if (failedStep && value !== '') {
+      addError(emailErrorMsg, failedStep.msg);
+      return false;
     } else {
-      emailErrorMsg.classList.remove('invalid-value');
-      emailErrorMsg.textContent = '';
-      isValidEmail = true;
+      removeError(emailErrorMsg);
+      return true;
     }
-    if (e.target.value === '') {
-      isValidEmail = false;
+    if (value === '') {
+      return false;
     }
   } catch (err) {
     console.log(err);
@@ -138,20 +136,21 @@ function checkEmail(e) {
 /**
  * The function checks the password against a regular expression and displays an error in the UI.
  */
-function checkPassword(e) {
+function checkPassword() {
   try {
-    if (e.target.value !== '' && !/^.{4,24}$/.test(e.target.value)) {
-      passwordErrorMsg.classList.add('invalid-value');
-      passwordErrorMsg.textContent =
-        'The password must be between 4 and 24 characters long';
-      isValidPassword = false;
+    const value = passwordInput.value;
+    if (value !== '' && !/^.{4,24}$/.test(value)) {
+      addError(
+        passwordErrorMsg,
+        'The password must be between 4 and 24 characters long',
+      );
+      return false;
     } else {
-      passwordErrorMsg.classList.remove('invalid-value');
-      passwordErrorMsg.textContent = '';
-      isValidPassword = true;
+      removeError(passwordErrorMsg);
+      return true;
     }
-    if (e.target.value === '') {
-      isValidPassword = false;
+    if (value === '') {
+      return false;
     }
   } catch (err) {
     console.log(err);
@@ -164,27 +163,68 @@ function checkPassword(e) {
 function checkConfirmPassword() {
   try {
     if (passwordInput.value === '' || passwordConfirmInput.value === '') {
-      passwordConfirmErrorMsg.classList.remove('invalid-value');
-      passwordConfirmErrorMsg.textContent = '';
-      isValidConfirmPassword = false;
+      removeError(passwordConfirmErrorMsg);
+      return false;
     } else if (passwordInput.value !== passwordConfirmInput.value) {
-      passwordConfirmErrorMsg.classList.add('invalid-value');
-      passwordConfirmErrorMsg.textContent =
-        'The passwords in the password and confirmation password fields do not match';
-      isValidConfirmPassword = false;
+      addError(
+        passwordConfirmErrorMsg,
+        'The passwords in the password and confirmation password fields do not match',
+      );
+      return false;
     } else {
-      passwordConfirmErrorMsg.classList.remove('invalid-value');
-      passwordConfirmErrorMsg.textContent = '';
-      isValidConfirmPassword = true;
+      removeError(passwordConfirmErrorMsg);
+      return true;
     }
   } catch (err) {
     console.log(err);
   }
 }
 
-let isValidEmail = false;
-let isValidPassword = false;
-let isValidConfirmPassword = false;
+/**
+ * The function adds the passed error to the passed field.
+ * @param {obj} errorField
+ * @param {string} errorText
+ */
+function addError(errorField, errorText) {
+  errorField.classList.add('error-msg');
+  errorField.textContent = errorText;
+}
+
+/**
+ * The function removes the error from the passed field.
+ * @param {obj} errorField
+ */
+function removeError(errorField) {
+  errorField.classList.remove('error-msg');
+  errorField.textContent = '';
+}
+
+/**
+ * Adds the ability to submit a form.
+ */
+function addSending() {
+  submitBtn.classList.remove('not-working-btn');
+  submitBtn.removeAttribute('disabled');
+}
+
+/**
+ * Removes the ability to submit a form.
+ */
+function removeSending() {
+  submitBtn.classList.add('not-working-btn');
+  submitBtn.setAttribute('disabled', 'true');
+}
+
+/**
+ * Checks whether the form can be submitted.
+ */
+function updateSubmitBtn() {
+  if (checkEmail() && checkPassword() && checkConfirmPassword()) {
+    addSending();
+  } else {
+    removeSending();
+  }
+}
 
 // base structure
 const form = addElement('form');
@@ -245,7 +285,7 @@ const displayNameInput = addElement(
   },
   '',
 );
-const emailContainer = addElement('div', { class: 'input-container' }); // ?
+const emailContainer = addElement('div', { class: 'input-container' });
 const emailInput = addElement(
   'input',
   {
@@ -258,7 +298,7 @@ const emailInput = addElement(
   '',
 );
 const emailErrorMsg = addElement('div');
-emailInput.addEventListener('input', checkEmail);
+emailInput.addEventListener('input', updateSubmitBtn);
 
 // password inputs block
 const passwordsContainer = addElement('div');
@@ -288,9 +328,8 @@ const passwordConfirmInput = addElement(
   '',
 );
 const passwordConfirmErrorMsg = addElement('div');
-passwordInput.addEventListener('input', checkPassword);
-passwordConfirmInput.addEventListener('input', checkConfirmPassword);
-passwordInput.addEventListener('input', checkConfirmPassword);
+passwordInput.addEventListener('input', updateSubmitBtn);
+passwordConfirmInput.addEventListener('input', updateSubmitBtn);
 
 // first radio-container
 buyerRadioContainer.classList.add('radio-container');
@@ -339,6 +378,7 @@ const allowLabel = addElement(
 );
 
 // submitBtn
+removeSending();
 form.addEventListener('submit', addToStorage);
 
 // appending
