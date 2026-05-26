@@ -6,8 +6,7 @@ class Person {
   }
 }
 
-/**
- * The function creates an element with the given tag, attributes, and text
+/** The function creates an element with the given tag, attributes, and text
  * @param {string} tag
  * @param {object} attrs
  * @param {string} text
@@ -23,165 +22,89 @@ function addElement(tag, attrs = {}, text = '') {
 
   return element;
 }
-/**
- * The function changes the displayName field to undefined if the field is empty. Used as a replacer in the .stringify() method.
- */
-function checkDisplayName(key, value) {
-  if (key === 'displayName' && value === '') return 'undefined';
-  return value;
-}
 
-/**
- * The function adds data from all inputs (except passwords, radio buttons and checkboxes) and outputs them to local storage.
- */
+/** The function adds data from all inputs (except passwords, radio buttons and checkboxes) and outputs them to local storage. */
 function addToStorage(e) {
-  try {
-    e.preventDefault();
-    if (!submitBtn.hasAttribute('disabled')) {
-      // ?
-      const data = document.querySelectorAll('.input-field[name]');
-      const user = new Person(...data);
-      localStorage.setItem(
-        user.lName,
-        JSON.stringify(user, checkDisplayName, 2),
-      );
-    } else {
-      throw new Error('You have an error!');
-    }
-  } catch (err) {
-    console.log(err);
+  e.preventDefault();
+  if (!submitBtn.hasAttribute('disabled')) {
+    const data = document.querySelectorAll('.input-field[name]');
+    const user = new Person(...data);
+    localStorage.setItem(
+      user.lName,
+      JSON.stringify(
+        user,
+        (key, value) =>
+          key === 'displayName' && value === '' ? 'undefined' : value,
+        2,
+      ),
+    );
   }
 }
 
-/**
- * The function checks the email entered against a regular expression and displays an error in the UI.
- */
+/** Checks whether the form can be submitted. */
+function updateSubmitBtn() {
+  const isValidEmail = checkEmail();
+  const isValidPassword = checkPassword();
+  const isValidConfirmPassword = checkConfirmPassword();
+
+  if (isValidEmail && isValidPassword && isValidConfirmPassword) {
+    addSending();
+  } else {
+    removeSending();
+  }
+}
+
+/** The function checks the email entered against a regular expression and displays an error in the UI. */
 function checkEmail() {
-  try {
-    // ~~~~~~~~~~~~ My decision ~~~~~~~~~~~~
-    // const regExp1 = /^[a-zA-Z0-9._%+-]+/;
-    // const regExp2 = /^[a-zA-Z0-9._%+-]+@/;
-    // const regExp3 = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+/;
-    // const regExp4 = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\./;
-    // const regExp5 = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    // if (e.target.value !== '' && !regExp5.test(e.target.value)) {
-    //   emailErrorMsg.classList.add('invalid-value');
-    //   emailErrorMsg.textContent =
-    //     'The third part should have only A-Z, a-z in the number of 2 characters or more';
-    //   if (!regExp1.test(e.target.value)) {
-    //     emailErrorMsg.textContent =
-    //       'The first part should only have A-Z, a-z, 0-9, ., _, %, +, -';
-    //   } else if (!regExp2.test(e.target.value)) {
-    //     emailErrorMsg.textContent =
-    //       'The first part must be followed by the @ symbol';
-    //   } else if (!regExp3.test(e.target.value)) {
-    //     emailErrorMsg.textContent =
-    //       'After @ should be only A-z, a-z, 0-9, ., -';
-    //   } else if (!regExp4.test(e.target.value)) {
-    //     emailErrorMsg.textContent = 'There should be a . after the second part';
-    //   }
-    //   return false;
-    // } else {
-    //   removeError(emailErrorMsg);
-    //   return true;
-    // }
-
-    // ~~~~~~~~~~~~ AI decision ~~~~~~~~~~~~
-    const value = emailInput.value;
-
-    const part1 = '[a-zA-Z0-9._%+-]+';
-    const part2 = '[a-zA-Z0-9.-]+';
-    const part3 = '[a-zA-Z]{2,}';
-    const validationSteps = [
-      {
-        pattern: new RegExp(`^${part1}`),
-        msg: 'The first part should only have A-Z, a-z, 0-9, ., _, %, +, -',
-      },
-      {
-        pattern: new RegExp(`^${part1}@`),
-        msg: 'The first part must be followed by the @ symbol',
-      },
-      {
-        pattern: new RegExp(`^${part1}@${part2}`),
-        msg: 'After @ should be only A-z, a-z, 0-9, ., -',
-      },
-      {
-        pattern: new RegExp(`^${part1}@${part2}\\.`),
-        msg: 'There should be a . after the second part',
-      },
-      {
-        pattern: new RegExp(`^${part1}@${part2}\\.${part3}$`),
-        msg: 'The third part should have only A-Z, a-z in the number of 2 characters or more',
-      },
-    ];
-
-    const failedStep = validationSteps.find(step => !step.pattern.test(value));
-
+  if (emailInput.value === '') {
     removeError(emailErrorMsg);
-    if (failedStep && value !== '') {
-      addError(emailErrorMsg, failedStep.msg);
-      return false;
-    } else {
-      removeError(emailErrorMsg);
-      return true;
-    }
-    if (value === '') {
-      return false;
-    }
-  } catch (err) {
-    console.log(err);
+    return false;
   }
+  if (
+    !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(emailInput.value)
+  ) {
+    addError(emailErrorMsg, 'Email is nod valid!');
+    return false;
+  }
+  removeError(emailErrorMsg);
+  return true;
 }
 
-/**
- * The function checks the password against a regular expression and displays an error in the UI.
- */
+/** The function checks the password against a regular expression and displays an error in the UI. */
 function checkPassword() {
-  try {
-    const value = passwordInput.value;
-    if (value !== '' && !/^.{4,24}$/.test(value)) {
-      addError(
-        passwordErrorMsg,
-        'The password must be between 4 and 24 characters long',
-      );
-      return false;
-    } else {
-      removeError(passwordErrorMsg);
-      return true;
-    }
-    if (value === '') {
-      return false;
-    }
-  } catch (err) {
-    console.log(err);
+  if (passwordInput.value === '') {
+    removeError(passwordErrorMsg);
+    return false;
   }
+  if (!/^.{4,24}$/.test(passwordInput.value)) {
+    addError(
+      passwordErrorMsg,
+      'The password must be between 4 and 24 characters long!',
+    );
+    return false;
+  }
+  removeError(passwordErrorMsg);
+  return true;
 }
 
-/**
- * The function checks the password against the password confirmation and displays an error in the UI.
- */
+/** The function checks the password against the password confirmation and displays an error in the UI. */
 function checkConfirmPassword() {
-  try {
-    if (passwordInput.value === '' || passwordConfirmInput.value === '') {
-      removeError(passwordConfirmErrorMsg);
-      return false;
-    } else if (passwordInput.value !== passwordConfirmInput.value) {
-      addError(
-        passwordConfirmErrorMsg,
-        'The passwords in the password and confirmation password fields do not match',
-      );
-      return false;
-    } else {
-      removeError(passwordConfirmErrorMsg);
-      return true;
-    }
-  } catch (err) {
-    console.log(err);
+  if (passwordInput.value === '' || passwordConfirmInput.value === '') {
+    removeError(passwordConfirmErrorMsg);
+    return false;
   }
+  if (passwordInput.value !== passwordConfirmInput.value) {
+    addError(
+      passwordConfirmErrorMsg,
+      'The passwords in the password and confirmation password fields do not match!',
+    );
+    return false;
+  }
+  removeError(passwordConfirmErrorMsg);
+  return true;
 }
 
-/**
- * The function adds the passed error to the passed field.
+/** The function adds the passed error to the passed field.
  * @param {obj} errorField
  * @param {string} errorText
  */
@@ -190,8 +113,7 @@ function addError(errorField, errorText) {
   errorField.textContent = errorText;
 }
 
-/**
- * The function removes the error from the passed field.
+/** The function removes the error from the passed field.
  * @param {obj} errorField
  */
 function removeError(errorField) {
@@ -199,31 +121,16 @@ function removeError(errorField) {
   errorField.textContent = '';
 }
 
-/**
- * Adds the ability to submit a form.
- */
+/** Adds the ability to submit a form. */
 function addSending() {
   submitBtn.classList.remove('not-working-btn');
   submitBtn.removeAttribute('disabled');
 }
 
-/**
- * Removes the ability to submit a form.
- */
+/** Removes the ability to submit a form. */
 function removeSending() {
   submitBtn.classList.add('not-working-btn');
   submitBtn.setAttribute('disabled', 'true');
-}
-
-/**
- * Checks whether the form can be submitted.
- */
-function updateSubmitBtn() {
-  if (checkEmail() && checkPassword() && checkConfirmPassword()) {
-    addSending();
-  } else {
-    removeSending();
-  }
 }
 
 // base structure
