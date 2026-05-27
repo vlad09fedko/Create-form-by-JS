@@ -128,7 +128,7 @@ const submitBtn = addElement('input', {
   class: 'button not-working-btn',
   type: 'submit',
   value: 'Create account',
-  disaled: 'true',
+  disabled: true,
 });
 
 // name inputs block
