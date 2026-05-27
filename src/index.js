@@ -43,17 +43,10 @@ function addToStorage(e) {
 
 /** Checks whether the form can be submitted. */
 function updateSubmitBtn() {
-  const isValidEmail = checkEmail();
-  const isValidPassword = checkPassword();
-  const isValidConfirmPassword = checkConfirmPassword();
+  const isValid = !(checkEmail() && checkPassword() && checkConfirmPassword());
 
-  if (isValidEmail && isValidPassword && isValidConfirmPassword) {
-    submitBtn.classList.remove('not-working-btn');
-    submitBtn.removeAttribute('disabled');
-  } else {
-    submitBtn.classList.add('not-working-btn');
-    submitBtn.setAttribute('disabled', 'true');
-  }
+  submitBtn.classList.toggle('not-working-btn', isValid);
+  submitBtn.toggleAttribute('disabled', isValid);
 }
 
 /** The function checks the email entered against a regular expression and displays an error in the UI. */
