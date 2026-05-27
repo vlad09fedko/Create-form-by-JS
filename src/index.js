@@ -48,89 +48,71 @@ function updateSubmitBtn() {
   const isValidConfirmPassword = checkConfirmPassword();
 
   if (isValidEmail && isValidPassword && isValidConfirmPassword) {
-    addSending();
+    submitBtn.classList.remove('not-working-btn');
+    submitBtn.removeAttribute('disabled');
   } else {
-    removeSending();
+    submitBtn.classList.add('not-working-btn');
+    submitBtn.setAttribute('disabled', 'true');
   }
 }
 
 /** The function checks the email entered against a regular expression and displays an error in the UI. */
 function checkEmail() {
-  if (emailInput.value === '') {
-    removeError(emailErrorMsg);
+  if (!emailInput.value) {
+    toggleError(emailErrorMsg);
     return false;
   }
   if (
     !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(emailInput.value)
   ) {
-    addError(emailErrorMsg, 'Email is nod valid!');
+    toggleError(emailErrorMsg, 'Email is nod valid!');
     return false;
   }
-  removeError(emailErrorMsg);
+  toggleError(emailErrorMsg);
   return true;
 }
 
 /** The function checks the password against a regular expression and displays an error in the UI. */
 function checkPassword() {
-  if (passwordInput.value === '') {
-    removeError(passwordErrorMsg);
+  if (!passwordInput.value) {
+    toggleError(passwordErrorMsg);
     return false;
   }
   if (!/^.{4,24}$/.test(passwordInput.value)) {
-    addError(
+    toggleError(
       passwordErrorMsg,
       'The password must be between 4 and 24 characters long!',
     );
     return false;
   }
-  removeError(passwordErrorMsg);
+  toggleError(passwordErrorMsg);
   return true;
 }
 
 /** The function checks the password against the password confirmation and displays an error in the UI. */
 function checkConfirmPassword() {
-  if (passwordInput.value === '' || passwordConfirmInput.value === '') {
-    removeError(passwordConfirmErrorMsg);
+  if (!passwordInput.value || !passwordConfirmInput.value) {
+    toggleError(passwordConfirmErrorMsg);
     return false;
   }
   if (passwordInput.value !== passwordConfirmInput.value) {
-    addError(
+    toggleError(
       passwordConfirmErrorMsg,
       'The passwords in the password and confirmation password fields do not match!',
     );
     return false;
   }
-  removeError(passwordConfirmErrorMsg);
+  toggleError(passwordConfirmErrorMsg);
   return true;
 }
 
-/** The function adds the passed error to the passed field.
+/** The function changes the class and text in case of error.
  * @param {obj} errorField
  * @param {string} errorText
  */
-function addError(errorField, errorText) {
-  errorField.classList.add('error-msg');
+function toggleError(errorField, errorText = '') {
+  errorField.classList.toggle('error-msg', !!errorText);
   errorField.textContent = errorText;
-}
-
-/** The function removes the error from the passed field.
- * @param {obj} errorField
- */
-function removeError(errorField) {
-  errorField.classList.remove('error-msg');
-  errorField.textContent = '';
-}
-
-/** Adds the ability to submit a form. */
-function addSending() {
-  submitBtn.classList.remove('not-working-btn');
-  submitBtn.removeAttribute('disabled');
-}
-
-/** Removes the ability to submit a form. */
-function removeSending() {
-  submitBtn.classList.add('not-working-btn');
-  submitBtn.setAttribute('disabled', 'true');
 }
 
 // base structure
@@ -150,9 +132,10 @@ const allowCheckboxContainer = addElement(
   '',
 );
 const submitBtn = addElement('input', {
-  class: 'button',
+  class: 'button not-working-btn',
   type: 'submit',
   value: 'Create account',
+  disaled: 'true',
 });
 
 // name inputs block
@@ -285,7 +268,6 @@ const allowLabel = addElement(
 );
 
 // submitBtn
-removeSending();
 form.addEventListener('submit', addToStorage);
 
 // appending
