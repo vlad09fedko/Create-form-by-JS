@@ -43,10 +43,11 @@ function addToStorage(e) {
 
 /** Checks whether the form can be submitted. */
 function updateSubmitBtn() {
-  const isValidEmail = checkEmail()
-  const isValidPassword = checkPassword()
-  const isValidConfirmPassword = checkConfirmPassword()
-  const isNotValid = !(isValidEmail && isValidPassword && isValidConfirmPassword);
+  const isNotValid = !(
+    checkEmail() &&
+    checkPassword() &&
+    checkConfirmPassword()
+  );
 
   submitBtn.classList.toggle('not-working-btn', isNotValid);
   submitBtn.toggleAttribute('disabled', isNotValid);
@@ -54,13 +55,12 @@ function updateSubmitBtn() {
 
 /** The function checks the email entered against a regular expression and displays an error in the UI. */
 function checkEmail() {
-  if (!emailInput.value) {
+  const value = emailInput.value;
+  if (!value) {
     toggleError(emailErrorMsg);
     return false;
   }
-  if (
-    !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(emailInput.value)
-  ) {
+  if (!/^[\w.%+-]+@[a-z\d.-]+\.[a-z]{2,}$/i.test(value)) {
     toggleError(emailErrorMsg, 'Email is nod valid!');
     return false;
   }
@@ -70,11 +70,12 @@ function checkEmail() {
 
 /** The function checks the password against a regular expression and displays an error in the UI. */
 function checkPassword() {
-  if (!passwordInput.value) {
+  const value = passwordInput.value;
+  if (!value) {
     toggleError(passwordErrorMsg);
     return false;
   }
-  if (!/^.{4,24}$/.test(passwordInput.value)) {
+  if (!/^.{4,24}$/.test(value)) {
     toggleError(
       passwordErrorMsg,
       'The password must be between 4 and 24 characters long!',
@@ -184,7 +185,7 @@ const emailInput = addElement(
   '',
 );
 const emailErrorMsg = addElement('div');
-emailInput.addEventListener('input', updateSubmitBtn);
+emailInput.addEventListener('input', checkEmail);
 
 // password inputs block
 const passwordsContainer = addElement('div');
@@ -214,8 +215,9 @@ const passwordConfirmInput = addElement(
   '',
 );
 const passwordConfirmErrorMsg = addElement('div');
-passwordInput.addEventListener('input', updateSubmitBtn);
-passwordConfirmInput.addEventListener('input', updateSubmitBtn);
+passwordInput.addEventListener('input', checkPassword);
+passwordInput.addEventListener('input', checkConfirmPassword);
+passwordConfirmInput.addEventListener('input', checkConfirmPassword);
 
 // first radio-container
 buyerRadioContainer.classList.add('radio-container');
@@ -265,6 +267,7 @@ const allowLabel = addElement(
 
 // submitBtn
 form.addEventListener('submit', addToStorage);
+form.addEventListener('input', updateSubmitBtn);
 
 // appending
 document.body.append(form);
